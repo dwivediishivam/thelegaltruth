@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body{
+    background-color: #0b1121;
+}
+
+section{
+    width: 100%;
+    height: 100vh;
+}
+
+.navigationbar{
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+    padding: 28px;
+    /* background-color: #; */
+}
+
+.navigationbar .logo p{
+    font-weight: bold;
+    font-size: large;
+    color: #fff;
+}
+
+.webcontent{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.webcontent .heading{
+    font-size: 3.2em;
+    font-weight: bold;
+    color: #fff;
+}
+
+.webcontent .smallheading{
+    color: #7d7d7d;
+}
+
+
+#particles-js {
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+    background-color: #0b1121;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+
+.storyForm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: auto;
+    transition: 0.5s;
+    max-width: 500px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.storyOutput {
+    position: inherit;
+    width: 100%;
+    height: auto;
+    overflow: auto;
+    opacity: 0;
+    margin-top: 5px;
+    transition: opacity 1s ease-in-out, height 1s ease-in-out;
+}
