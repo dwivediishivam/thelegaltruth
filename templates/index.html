@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="\static\styles.css">
-    <title>StoryScape.</title>
+    <title>TheLegalTruth.</title>
 </head>
 <body>
     <div id="particles-js"></div>
@@ -25,29 +25,24 @@
                               <a class="nav-link active" aria-current="page" href="#">Home</a>
                             </li>
                             <li class="nav-item">
-                              <a class="nav-link" href="#" onclick="document.getElementById('storyForm').style.display = 'block';">Generate Story</a>
+                              <a class="nav-link" href="#" onclick="document.getElementById('storyForm').style.display = 'block';">Find the Truth Now</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" target="_blank" href="https://docs.google.com/document/d/1l9uH5iAIYeiMiFMuMsjgqY4UtIfxa_DXHMoye5eb_-k/edit">Project Report</a>
+                                <a class="nav-link" target="_blank" href="https://docs.google.com/presentation/d/1JZgh5WDQIJbs0XJOhAQXyrL7BIOz-qzL97QriQT3ph4/edit#slide=id.g24421e47d72_0_0">Buinsess Pitch</a>
                               </li>
-                            <!-- <li class="nav-item">
-                                <a class="nav-link" href="#">Story Teller</a>
-                              </li> -->
                           </ul>
                     </div>
                 </div>
             </nav>
         </header>
         <div class="webcontent">
-            <p class="heading">Interactive Story Generation at a Click</p>
-            <p class="smallheading">Powered by AI and Mahisha, Shaina, Mahima, Janesh, Shivam.</p>
-            <!-- <button type="button" class="btn btn-primary mt-3">Generate now</button> -->
-            <button type="button" class="btn btn-primary mt-3" onclick="document.getElementById('storyForm').style.display = 'block';">Generate now</button>
+            <p class="heading">Summarising Legal Documents and Helping You Find the Truth</p>
+            <p class="smallheading">Powered by Microsoft for Startups and The Dot Store.</p>
+            <button type="button" class="btn btn-primary mt-3" onclick="document.getElementById('storyForm').style.display = 'block';">Find the Truth Now</button>
 
 
         </div>
 
-        <!-- Modal -->
         <div class="storyForm" id="storyForm" style="display: none;">
             <h5>Generate Story</h5>
             <form>
@@ -87,32 +82,8 @@
           var storyTheme = document.querySelector('input[name="storyTheme"]:checked').value;
           var storyStart = document.getElementById('storyStart').value;
           console.log(storyTheme, storyStart);
-          // You can now send storyTheme and storyStart to your backend
         });
         </script>
-        
-        <!-- <script>
-          document.getElementById('saveButton').addEventListener('click', function(event) {
-              event.preventDefault();
-              var storyTheme = document.querySelector('input[name="storyTheme"]:checked').value;
-              var storyStart = document.getElementById('storyStart').value;
-      
-              fetch('/', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({storyTheme: storyTheme, storyStart: storyStart})
-              })
-              .then(response => response.json())
-              .then(data => {
-                  alert("Generated Story: " + data.story); // Optionally, update the DOM to display the story
-              })
-              .catch((error) => {
-                  console.error('Error:', error);
-              });
-          });
-      </script>       -->
       <script>
       document.getElementById('saveButton').addEventListener('click', function(event) {
     event.preventDefault();
@@ -128,12 +99,9 @@
     })
     .then(response => response.json())
     .then(data => {
-        // Update the DOM to display the story
         var storyOutput = document.getElementById('storyOutput');
         storyOutput.innerText = "Generated Story: " + data.story;
-        // Add a class to make the story fade in
         storyOutput.style.opacity = 1;
-        // Adjust the height of the div
         storyOutput.style.height = storyOutput.scrollHeight + "px";
     })
     .catch((error) => {
