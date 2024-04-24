@@ -30,16 +30,23 @@ def upload_file():
 
 def process_pdf(filepath):
     model_name = "gpt-3.5-turbo-0125"
-    response = openai.ChatCompletion.create(
-        model=model_name,
-        messages=[{"role": "system", "content": "Just return me the following line :"},
-                    {"role": "user", "content": "OPEN AI CONNECTION SUCCESFUL"}],
-        temperature=0.7
-    )
-    story = "File Connection Sucess, OpenAI FAILURE"
-    story = str(response['choices'][0]['message']['content'])
-
+    try:
+        response = openai.ChatCompletion.create(
+            model=model_name,
+            messages=[
+                {"role": "system", "content": "Just return me the following line :"},
+                {"role": "user", "content": "OPEN AI CONNECTION SUCCESFUL"}
+            ],
+            temperature=0.7
+        )
+        story = str(response['choices'][0]['message']['content'])
+    except Exception as e:
+        # Log the exception for debugging purposes
+        print(f"OpenAI API call failed: {e}")
+        # Provide a fallback response in case of failure
+        story = "File Connection Sucess, OpenAI FAILURE"
     return story
+
 
 if __name__ == '__main__':
     app.run(debug=True)
