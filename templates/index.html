@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="\static\styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
     <title>TheLegalTruth.</title>
 </head>
 <body>
@@ -28,9 +28,9 @@
                           <a class="nav-link" href="#" onclick="document.getElementById('storyForm').style.display = 'block';">Find the Truth Now</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" target="_blank" href="https://docs.google.com/presentation/d/1JZgh5WDQIJbs0XJOhAQXyrL7BIOz-qzL97QriQT3ph4/edit#slide=id.g24421e47d72_0_0">Buinsess Pitch</a>
-                          </li>
-                      </ul>
+                            <a class="nav-link" target="_blank" href="https://docs.google.com/presentation/d/1JZgh5WDQIJbs0XJOhAQXyrL7BIOz-qzL97QriQT3ph4/edit#slide=id.g24421e47d72_0_0">Business Pitch</a>
+                        </li>
+                    </ul>
                 </div>
             </nav>
     </header>
@@ -52,61 +52,34 @@
         </form>
     </div>
 
-    <div class="storyForm" id="storyForm" style="display: none;">
-      <h5>Upload your Legal Document</h5>
-      <form id="uploadForm" enctype="multipart/form-data">
-          <div class="mb-3">
-              <label for="fileInput" class="form-label">Please upload the PDF document</label>
-              <input type="file" class="form-control" id="fileInput" name="file" accept=".pdf">
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <div id="resultOutput" class="alert alert-info" style="display:none;"></div>
-      </form>
-  </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="\static\particles.js"></script>
-    <script src="\static\app.js"></script>
+    <script src="/static/particles.js"></script>
+    <script src="/static/app.js"></script>
     <script>
       document.getElementById('uploadForm').addEventListener('submit', function(event) {
           event.preventDefault();
           const fileInput = document.getElementById('fileInput');
           const file = fileInput.files[0];
+          const formData = new FormData();
+          formData.append('file', file);
 
-          // Get SAS token from Flask
-          fetch('/sas_token').then(response => response.json()).then(data => {
-              const sasToken = data.sas_token;
-              const blobName = data.blob_name;
-
-              // Create Blob URL for upload
-              const blobUrl = `https://${AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net/${CONTAINER_NAME}/${blobName}?${sasToken}`;
-
-              // Upload file to Blob Storage
-              fetch(blobUrl, {
-                  method: 'PUT',
-                  headers: { 'x-ms-blob-type': 'BlockBlob' },
-                  body: file
-              })
-              .then(response => {
-                  if (response.ok) {
-                      // Here you can call another server endpoint to process the file
-                      // or trigger Azure Functions if you have set up one to process the file after upload
-                      return 'File uploaded successfully!';
-                  } else {
-                      throw new Error('Upload failed');
-                  }
-              })
-              .then(message => {
-                  document.getElementById('resultOutput').innerText = message;
-                  document.getElementById('resultOutput').style.display = 'block';
-              })
-              .catch(error => {
-                  console.error('Error:', error);
-                  document.getElementById('resultOutput').innerText = 'Upload failed';
-                  document.getElementById('resultOutput').style.display = 'block';
-              });
+          fetch('/upload', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.text())
+          .then(data => {
+            const resultOutput = document.getElementById('resultOutput');
+              resultOutput.innerText = data;
+              resultOutput.style.display = 'block';
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              const resultOutput = document.getElementById('resultOutput');
+              resultOutput.innerText = 'Upload failed: ' + error.message;
+              resultOutput.style.display = 'block';
           });
       });
-  </script>
+    </script>
 </body>
 </html>
