@@ -2,8 +2,7 @@ from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
-# Ensure the directory for uploads exists
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'uploads'  # Ensure this directory exists or is created via your deployment setup
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -19,7 +18,8 @@ def upload_file():
     if file.filename == '':
         return 'No selected file'
     if file and file.filename.endswith('.pdf'):
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        # Simpler handling without os.path.join
+        filepath = f"{app.config['UPLOAD_FOLDER']}/{file.filename}"
         file.save(filepath)
         return process_pdf(filepath)
     return 'Invalid file type'
