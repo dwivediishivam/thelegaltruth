@@ -1,12 +1,9 @@
 from flask import Flask, request, render_template
-import os
 
 app = Flask(__name__)
 
 # Ensure the directory for uploads exists
 UPLOAD_FOLDER = 'uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
