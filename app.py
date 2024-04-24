@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template
+import os
 
 app = Flask(__name__)
 
@@ -19,7 +20,7 @@ def upload_file():
         return 'No selected file'
     if file and file.filename.endswith('.pdf'):
         # Simpler handling without os.path.join
-        filepath = f"{app.config['UPLOAD_FOLDER']}/{file.filename}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
         return process_pdf(filepath)
     return 'Invalid file type'
