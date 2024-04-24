@@ -52,36 +52,27 @@
         </form>
     </div>
 
-    <div class="storyForm" id="storyForm" style="display: none;">
-      <h5>Upload your Legal Document</h5>
-      <form id="uploadForm" enctype="multipart/form-data">
-          <div class="mb-3">
-              <label for="fileInput" class="form-label">Please upload the PDF document</label>
-              <input type="file" class="form-control" id="fileInput" name="file" accept=".pdf">
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <div id="resultOutput" class="alert alert-info" style="display:none;"></div>
-      </form>
-  </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="\static\particles.js"></script>
     <script src="\static\app.js"></script>
     <script>
+      const AZURE_STORAGE_ACCOUNT_NAME = 'thelegaltruthdb'; // Define this appropriately
+      const CONTAINER_NAME = 'thelegaltruth-cont'; // Ensure this matches your Flask setup
+  
       document.getElementById('uploadForm').addEventListener('submit', function(event) {
           event.preventDefault();
           const fileInput = document.getElementById('fileInput');
           const file = fileInput.files[0];
-
-          // Get SAS token from Flask
+          if (!file) {
+              alert('Please select a file to upload.');
+              return;
+          }
+  
           fetch('/sas_token').then(response => response.json()).then(data => {
-              const sasToken = data.sas_token;
-              const blobName = data.blob_name;
-
-              // Create Blob URL for upload
-              const blobUrl = `https://${AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net/${CONTAINER_NAME}/${blobName}?${sasToken}`;
-
-              // Upload file to Blob Storage
+              const { sas_token, blob_name } = data;
+              const blobUrl = `https://${AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net/${CONTAINER_NAME}/${blob_name}?${sas_token}`;
+  
               fetch(blobUrl, {
                   method: 'PUT',
                   headers: { 'x-ms-blob-type': 'BlockBlob' },
@@ -89,16 +80,11 @@
               })
               .then(response => {
                   if (response.ok) {
-                      // Here you can call another server endpoint to process the file
-                      // or trigger Azure Functions if you have set up one to process the file after upload
-                      return 'File uploaded successfully!';
+                      document.getElementById('resultOutput').innerText = 'File uploaded successfully!';
+                      document.getElementById('resultOutput').style.display = 'block';
                   } else {
                       throw new Error('Upload failed');
                   }
-              })
-              .then(message => {
-                  document.getElementById('resultOutput').innerText = message;
-                  document.getElementById('resultOutput').style.display = 'block';
               })
               .catch(error => {
                   console.error('Error:', error);
@@ -108,5 +94,6 @@
           });
       });
   </script>
+  
 </body>
 </html>

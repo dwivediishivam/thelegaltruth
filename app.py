@@ -2,10 +2,10 @@ from flask import Flask, render_template, jsonify
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 from datetime import datetime, timedelta
 import os
+import uuid
 
 app = Flask(__name__)
 
-# Retrieve the connection string from an environment variable
 AZURE_STORAGE_CONNECTION_STRING = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
 @app.route('/')
@@ -15,8 +15,8 @@ def index():
 @app.route('/sas_token')
 def generate_sas_token():
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
-    container_name = 'thelegaltruthdb'
-    blob_name = 'thelegaltruth-cont' 
+    container_name = 'thelegaltruth-cont'
+    blob_name = f"{uuid.uuid4()}.pdf"  # Generates a unique blob name
     sas_token = generate_blob_sas(
         account_name=blob_service_client.account_name,
         container_name=container_name,
