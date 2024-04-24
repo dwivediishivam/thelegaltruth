@@ -41,10 +41,8 @@ def process_pdf(filepath):
         )
         story = str(response['choices'][0]['message']['content'])
     except Exception as e:
-        # Log the exception for debugging purposes
-        print(f"OpenAI API call failed: {e}")
-        # Provide a fallback response in case of failure
-        story = "File Connection Sucess, OpenAI FAILURE"
+        parta = "OpenAI API call failed" + e
+        story = parta + "File Connection Sucess, OpenAI FAILURE"
     return story
 
 
