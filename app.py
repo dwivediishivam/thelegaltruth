@@ -26,5 +26,15 @@ def upload_file():
         return process_pdf(filepath)
     return 'Invalid file type', 400
 
+def process_pdf(filepath):
+    text = ""
+    with open(filepath, 'rb') as file:
+        reader = PyPDF2.PdfFileReader(file)
+        num_pages = reader.numPages
+        for page_number in range(num_pages):
+            page = reader.getPage(page_number)
+            text += page.extractText()
+    return text
+
 if __name__ == '__main__':
     app.run(debug=True)
