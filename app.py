@@ -36,7 +36,8 @@ def process_pdf(filepath):
                     {"role": "user", "content": "OPEN AI CONNECTION SUCCESFUL"}],
         temperature=0.7
     )
-    story = response['choices'][0]['message']['content']
+    story = "File Connection Sucess, OpenAI FAILURE"
+    story = str(response['choices'][0]['message']['content'])
 
     return story
 
