@@ -3,7 +3,8 @@ import os
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploads'  # Ensure this directory exists or is created via your deployment setup
+UPLOAD_FOLDER = os.path.join('uploads')  # Using 'os.path.join' for future modifications
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create the upload directory if it doesn't exist
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -14,16 +15,15 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        return 'No file part'
+        return 'No file part', 400
     file = request.files['file']
     if file.filename == '':
-        return 'No selected file'
+        return 'No selected file', 400
     if file and file.filename.endswith('.pdf'):
-        # Simpler handling without os.path.join
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
         return process_pdf(filepath)
-    return 'Invalid file type'
+    return 'Invalid file type', 400
 
 def process_pdf(filepath):
     # Replace this with actual PDF processing logic

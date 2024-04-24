@@ -42,7 +42,7 @@
 
     <div class="storyForm" id="storyForm" style="display: none;">
         <h5>Upload your Legal Document</h5>
-        <form id="uploadForm" enctype="multipart/form-data">
+        <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
             <div class="mb-3">
                 <label for="fileInput" class="form-label">Please upload the PDF document</label>
                 <input type="file" class="form-control" id="fileInput" name="file" accept=".pdf">
