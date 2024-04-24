@@ -16,15 +16,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def pdf_to_ocr_text(filepath):
-    # Open the provided PDF file
     doc = fitz.open(filepath)
     text = ''
 
     for page in doc:
-        # Get the page as an image
         pix = page.get_pixmap()
         img = Image.open(io.BytesIO(pix.tobytes()))
-        
         page_text = pytesseract.image_to_string(img)
         text += page_text
 
