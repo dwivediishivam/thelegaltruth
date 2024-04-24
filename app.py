@@ -1,3 +1,7 @@
+import fitz  # PyMuPDF
+from PIL import Image
+import pytesseract
+import io
 from flask import Flask, request, render_template
 import os
 import openai
@@ -10,6 +14,21 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create the upload directory if it d
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
+
+def pdf_to_ocr_text(filepath):
+    # Open the provided PDF file
+    doc = fitz.open(filepath)
+    text = ''
+
+    for page in doc:
+        # Get the page as an image
+        pix = page.get_pixmap()
+        img = Image.open(io.BytesIO(pix.tobytes()))
+        
+        page_text = pytesseract.image_to_string(img)
+        text += page_text
+
+    return text
 
 @app.route('/')
 def index():
@@ -29,21 +48,9 @@ def upload_file():
     return 'Invalid file type', 400
 
 def process_pdf(filepath):
-    model_name = "gpt-3.5-turbo-0125"
-    try:
-        response = openai.ChatCompletion.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": "Just return me the following line :"},
-                {"role": "user", "content": "OPEN AI CONNECTION SUCCESFUL"}
-            ],
-            temperature=0.7
-        )
-        story = str(response['choices'][0]['message']['content'])
-    except Exception as e:
-        story = "File Connection Sucess, OpenAI FAILURE"
-    return story
-
+    # Perform OCR on the PDF
+    extracted_text = pdf_to_ocr_text(filepath)
+    return f'OCR Extracted Text: {extracted_text}'
 
 if __name__ == '__main__':
     app.run(debug=True)
