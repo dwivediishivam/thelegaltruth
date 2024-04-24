@@ -29,6 +29,7 @@ def upload_file():
     return 'Invalid file type', 400
 
 def process_pdf(filepath):
+    return "FAIL"
     model_name = "ft:gpt-3.5-turbo-0125"
     response = openai.ChatCompletion.create(
         model=model_name,
