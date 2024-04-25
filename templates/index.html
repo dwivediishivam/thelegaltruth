@@ -56,21 +56,24 @@
     <script src="\static\particles.js"></script>
     <script src="\static\app.js"></script>
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch('/upload', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.text())
+      document.getElementById('uploadForm').addEventListener('submit', function(event) {
+          event.preventDefault();
+          const formData = new FormData(this);
+          const loadingScreen = document.getElementById('loadingScreen');
+          loadingScreen.style.display = 'block';
+          fetch('/upload', {
+              method: 'POST',
+              body: formData,
+          }).then(response => response.text())
             .then(data => {
-                const resultOutput = document.getElementById('resultOutput');
-                resultOutput.innerText = data;
-                resultOutput.style.display = 'block';
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    </script>
+                document.getElementById('resultOutput').innerText = data;
+                document.getElementById('resultOutput').style.display = 'block';
+                loadingScreen.style.display = 'none';
+            }).catch(error => {
+                console.error('Error:', error);
+                loadingScreen.style.display = 'none';
+            });
+      });
+  </script>
 </body>
 </html>
