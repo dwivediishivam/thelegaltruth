@@ -66,7 +66,7 @@ def process_pdf(filepath):
         messages=[
             {
                 "role": "user",
-                "content": "Read the document that has been provided to you in your knowledge carefully and then give me a summary of the same.",
+                "content": "Read the document that has been provided to you in your knowledge carefully and then give me a summary of the same. Also after the summary list all possible scams if any, scams as in things that might be out of order, and might scam any individual, on both sides, if there's nothing scamy, return Document seems ok in the scam section",
                 "attachments": [{"file_id": message_file.id, "tools": [{"type": "file_search"}]}],
             }
         ]
