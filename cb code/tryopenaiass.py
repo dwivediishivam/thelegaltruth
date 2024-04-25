@@ -2,7 +2,6 @@ from openai import OpenAI
 
 client = OpenAI(api_key=("sk-proj-4MgKpChcrmcg8Tkzq4wtT3BlbkFJzGClb2YgbDUOM3oXSpIX"))
 
-# Create an assistant
 assistant = client.beta.assistants.create(
     name="Legal Documents Analyser and Support Assistant (LegalEase)",
     instructions="You are an expert legal analyst. Use your knowledge base to answer questions about the given legal statements.",
@@ -12,8 +11,9 @@ assistant = client.beta.assistants.create(
 
 vector_store = client.beta.vector_stores.create(name="Legal Documents")
 
+filepath = "uploads/rental_agreement_template.pdf"
 # Ready the files for upload to OpenAI
-file_paths = ["uploads/rental_agreement_template.pdf"]
+file_paths = [filepath]
 file_streams = [open(path, "rb") for path in file_paths]
 
 # Upload the files, add them to the vector store, and poll the status of the file batch
@@ -28,7 +28,7 @@ assistant = client.beta.assistants.update(
 )
 
 # Upload the user-provided file to OpenAI
-message_file = client.files.create(file=open("uploads/rental_agreement_template.pdf", "rb"), purpose="assistants")
+message_file = client.files.create(file=open(filepath, "rb"), purpose="assistants")
 
 # Create a thread and attach the file to the message
 thread = client.beta.threads.create(
