@@ -1,10 +1,6 @@
-import fitz  # PyMuPDF
-from PIL import Image
-import pytesseract
-import io
 from flask import Flask, request, render_template
 import os
-import openai
+from openai import OpenAI
 
 app = Flask(__name__)
 
@@ -13,19 +9,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create the upload directory if it d
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-openai.api_key = os.getenv('OPENAI_API_KEY')
-
-def pdf_to_ocr_text(filepath):
-    doc = fitz.open(filepath)
-    text = ''
-
-    for page in doc:
-        pix = page.get_pixmap()
-        img = Image.open(io.BytesIO(pix.tobytes()))
-        page_text = pytesseract.image_to_string(img)
-        text += page_text
-
-    return text
+client = OpenAI(api_key = os.environ.get("OPENAI_API_KEY"))
 
 @app.route('/')
 def index():
@@ -45,9 +29,54 @@ def upload_file():
     return 'Invalid file type', 400
 
 def process_pdf(filepath):
-    # Perform OCR on the PDF
-    extracted_text = pdf_to_ocr_text(filepath)
-    return f'OCR Extracted Text: {extracted_text}'
+
+    # Create an assistant
+    assistant = client.beta.assistants.create(
+        name="Legal Documents Analyser and Support Assistant (LegalEase)",
+        instructions="You are an expert legal analyst. Use your knowledge base to answer questions about the given legal statements.",
+        model="gpt-4-turbo",
+        tools=[{"type": "file_search"}],
+    )
+
+    vector_store = client.beta.vector_stores.create(name="Legal Documents")
+
+    # Ready the files for upload to OpenAI
+    file_paths = [filepath]
+    file_streams = [open(path, "rb") for path in file_paths]
+
+    # Upload the files, add them to the vector store, and poll the status of the file batch
+    file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
+        vector_store_id=vector_store.id, files=file_streams
+    )
+
+    # Update the assistant with the vector store
+    assistant = client.beta.assistants.update(
+        assistant_id=assistant.id,
+        tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}},
+    )
+
+    # Upload the user-provided file to OpenAI
+    message_file = client.files.create(file=open(filepath, "rb"), purpose="assistants")
+
+    # Create a thread and attach the file to the message
+    thread = client.beta.threads.create(
+        messages=[
+            {
+                "role": "user",
+                "content": "Read the document that has been provided to you in your knowledge carefully and then give me a summary of the same.",
+                "attachments": [{"file_id": message_file.id, "tools": [{"type": "file_search"}]}],
+            }
+        ]
+    )
+
+    run = client.beta.threads.runs.create_and_poll(
+        thread_id=thread.id, assistant_id=assistant.id
+    )
+
+    messages = list(client.beta.threads.messages.list(thread_id=thread.id, run_id=run.id))
+    message_content = messages[0].content[0].text
+    return str(message_content.value)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
