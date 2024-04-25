@@ -12,6 +12,7 @@
 </head>
 <body>
     <div id="particles-js"></div>
+    <div class="loader" id="loader"></div>
 
     <header>
         <nav>
@@ -59,18 +60,30 @@
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
+            const loader = document.getElementById('loader');
+            const resultOutput = document.getElementById('resultOutput');
+
+            // Display the loader
+            loader.style.display = 'block';
+
             fetch('/upload', {
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.text())
             .then(data => {
-                const resultOutput = document.getElementById('resultOutput');
+                // Hide the loader when data is received
+                loader.style.display = 'none';
                 resultOutput.innerText = data;
                 resultOutput.style.display = 'block';
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                // Hide the loader on error too
+                loader.style.display = 'none';
+            });
         });
+
     </script>
 </body>
 </html>
