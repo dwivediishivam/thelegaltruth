@@ -12,7 +12,7 @@
 </head>
 <body>
     <div id="particles-js"></div>
-
+    <div id="loadingScreen" class="loading-overlay" style="display: none;">Loading ...</div>
     <header>
         <nav>
             <div class="navigationbar">
@@ -55,7 +55,7 @@
               event.preventDefault();
               const formData = new FormData(this);
               const loadingScreen = document.getElementById('loadingScreen');
-              loadingScreen.style.display = 'block';
+              loadingScreen.style.display = 'flex'; // Display as flex to center the loading text
               fetch('/upload', {
                   method: 'POST',
                   body: formData,
